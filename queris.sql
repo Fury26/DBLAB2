@@ -17,3 +17,10 @@ values(2, 7, 5, '10/11/2020'::timestamp, '1:0', '30'::money);
 
 SELECT * FROM match;
 
+-- genearation of random values
+
+
+
+select chr(trunc(65+random(25)*)::int);
+
+

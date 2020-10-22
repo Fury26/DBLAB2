@@ -1,15 +1,33 @@
-.mainmenu {
+/* .mainmenu {
     border: 1px solid black;
     display: flex;
     justify-content: space-around;
-}
+} */
 
-.card {
+/*.card {
     border-radius: 10px;
     min-width: 300px;
     min-height: 200px;
     text-align: center;
     border: 1px solid blue;
+}*/
+
+/* .Cards {
+    display: flex;
+} */
+
+.div-card {
+    margin: 30px;
+    background: lightcyan;
+    transition: all .3s ease-in-out;
+}
+
+.div-card:hover{
+    transform: scale(1.1);
+}
+
+body {
+    background: lightblue;
 }
 
 

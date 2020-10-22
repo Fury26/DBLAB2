@@ -7,12 +7,24 @@ const selectAll = 'SELECT id, firstname, lastname, club_id, FORMAT(birthday::var
 
 router.get('/player', async(req, res) => {
     try {
-        console.log('On server player');
         const players = await pool.query(`${selectAll} player;`)
-        console.log(players.rows)
         res.json(players.rows)
     } catch (error) {
         console.log(error.message)
+    }
+})
+
+router.post('/player/rand', async(req, res) => {
+    try {
+        const {count} = req.body
+        let qu = `INSERT INTO player(name) select getrandomstring(10) as firstname, getrandomstring(10) as lastname, trunc(random()*(SELECT MAX(id) from club)) as club_id,  from generate_series(1, ${count});`
+         
+        let response = await pool.query(qu)
+        qu = `${selectAll} player ORDER BY id DESC FETCH FIRST ${count} ROW ONLY;`
+        response = await pool.query(qu)
+        res.json(response.rows)
+    } catch (error) {
+        console.log(error.message);
     }
 })
 
@@ -20,8 +32,6 @@ router.post('/player/search', async(req, res) => {
     try {
         let {lastname, firstname, club_id, birthday} = req.body
         let qu = `${selectAll} player WHERE TRUE `
-        console.log(typeof club_id)
-        //console.log(lastname);
         if(lastname !== undefined && lastname.length !== 0) {
             qu += `AND LOWER(lastname) LIKE \'%${lastname}%\' `
         }
@@ -35,14 +45,10 @@ router.post('/player/search', async(req, res) => {
             qu += `AND birthday = '${birthday}'::date`
         }
         qu += ';'
-        console.log(qu)
+         
 
-        console.log(`lastname: ${lastname}, firstname: ${firstname}, club_id: ${club_id}, birthday: ${birthday}`);
-        //const qu = `SELECT * FROM club WHERE LOWER(name) LIKE \'%${name}%\'`
-        //console.log(qu)
         const response = await pool.query(qu)
         res.json(response.rows)
-        //res.json('Server has got a data')
     } catch (error) {
         console.log(error.message);
     }
@@ -52,7 +58,7 @@ router.post('/player/new', async(req, res) => {
     try {
         let {lastname, firstname, club_id, birthday} = req.body
         let qu = `INSERT INTO player(firstname, lastname, club_id, birthday) values (\'${firstname}\', \'${lastname}\', ${club_id}, \'${birthday}\'::date);`
-        console.log(qu)
+         
         let response = await pool.query(qu)
         qu = `${selectAll} ${tables.player} ORDER BY id DESC FETCH FIRST 1 ROW ONLY;`
         response = await pool.query(qu)
@@ -65,7 +71,6 @@ router.post('/player/new', async(req, res) => {
 
 router.put('/player/:id', async(req, res) => {
     try {
-        console.log('PUT player on server')
         const {id} = req.params
         const {firstname, lastname, club_id, birthday} = req.body
         let qu = ` `
@@ -83,7 +88,7 @@ router.put('/player/:id', async(req, res) => {
         }
         if(qu[qu.length - 1] === ',') qu[qu.length - 1] = ' '
          
-        console.log(qu)
+         
         let query2 = `UPDATE player SET ${qu} WHERE id = ${id};`
         let response = await pool.query(query2)
         qu = `${selectAll} player WHERE id = ${id};`
@@ -98,7 +103,6 @@ router.put('/player/:id', async(req, res) => {
 router.delete('/player/:id', async(req, res) => {
     try {
         const {id} = req.params
-        console.log(id);
         const qu = `DELETE FROM player WHERE id = ${id};`
         const response = await pool.query(qu)
         

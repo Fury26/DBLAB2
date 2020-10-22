@@ -5,11 +5,11 @@ import { Routes } from './Routes';
 function App() {
   const routes = Routes()
   return (
-    <Fragment>
+    <div className="container">
         <Router>
             {routes}
         </Router>
-    </Fragment>
+    </div>
   );
 }
 

@@ -1,16 +1,31 @@
 import React from 'react'
 import {Switch, Route, Redirect} from 'react-router-dom'
-//import { Club } from './components/Club'
-import Table from './components/Club'
+import Table from './components/Table'
 import { MainMenu } from './components/MainMenu'
-import {types} from './components/Club'
-import Navbar from './components/navbar'
+import {types} from './components/Table'
 
 export const Routes = () => {
 
     const clubTable = [
         {field: 'id', type: types.number},
         {field: 'name', type: types.string},
+    ]
+
+    const clubsTournamentsTable = [
+        {field: 'id', type: types.number},
+        {field: 'club_id', type: types.number},
+        {field: 'tournament_id', type: types.number},
+    ]
+
+    const clubStadiumTable = [
+        {field: 'club_id', type: types.number},
+        {field: 'stadium_id', type: types.number},
+    ]
+
+    const tournamentTable = [
+        {field: 'id', type: types.number},
+        {field: 'title', type: types.string},
+        {field: 'teams_count', type: types.number},
     ]
 
     const playerTable = [
@@ -27,6 +42,16 @@ export const Routes = () => {
         {field: 'capacity', type:types.number},
         {field: 'city', type:types.string},
     ]
+
+    const matchTable = [
+        {field: 'id', type:types.number},
+        {field: 'tournament_id', type:types.number},
+        {field: 'home_club_id', type:types.number},
+        {field: 'away_club_id', type:types.number},
+        {field: 'result', type:types.string},
+        {field: 'ticket_cost', type:types.money},
+        {field: 'datetime', type:types.datetime},
+    ]
     
 
 
@@ -36,13 +61,25 @@ export const Routes = () => {
                 <MainMenu />
             </Route>
             <Route path="/club" exact>
-                <Table table={clubTable} tableName="club"/>
+                <Table table={clubTable} tableName="club" randomize={true}/>
             </Route>
             <Route path="/player" exact>
-                <Table table={playerTable} tableName="player"/>
+                <Table table={playerTable} tableName="player" randomize={false}/>
             </Route>
             <Route path="/stadium" exact>
-                <Table table={stadiumTable} tableName="stadium" />
+                <Table table={stadiumTable} tableName="stadium" randomize={true}/>
+            </Route>
+            <Route path="/match" exact>
+                <Table table={matchTable} tableName="match" randomize={false}/>
+            </Route>
+            <Route path="/tournament" exact>
+                <Table table={tournamentTable} tableName="tournament" randomize={true}/>
+            </Route>
+            <Route path="/clubs_tournaments" exact>
+                <Table table={clubsTournamentsTable} tableName="clubs_tournaments" randomize={false}/>
+            </Route>
+            <Route path="/club_stadium" exact>
+                <Table table={clubStadiumTable} tableName="club_stadium" randomize={false}/>
             </Route>
             <Redirect to="/" />
         </Switch>

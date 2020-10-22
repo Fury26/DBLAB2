@@ -13,14 +13,7 @@ export const types = {
 class Table2 extends React.Component {
 
 
-    /*componentDidUpdate() {
-        if(this.state.rows.length === 0) {
-            this.getRows(this.props.tableName)
-            console.log('updated\nProps: ', this.props);
-        }
-        console.log('array length', this.state.rows.length );
-
-    }*/
+    
 
     
 

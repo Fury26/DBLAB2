@@ -1,194 +1,8 @@
-/*import React, {Fragment, useEffect, useState} from 'react'
-import './styles.css'
-
-export const Club = () => {
-
-    const [clubs, setCLubs] = useState([])
-    const [club, setClub] = useState({})
-    const [searchClub, setSearchClub] = useState({})
-
-    const getClubs = async () => {
-        try {
-            const response = await fetch(
-                'http://192.168.0.20:5000/clubs', {
-                    method: 'GET',
-                }
-            )
-            const jsonData = await response.json()
-
-            setCLubs(jsonData)
-        } catch (error) {
-            console.log(error.message);
-        }
-    }
-
-    useEffect( () => {
-        getClubs()
-    }, [])
-
-    const editingField = visibility => {
-        const elem = document.getElementById('form-editing')
-        if( visibility) elem.classList = ['form-editing-visible']
-            else elem.classList = ['form-editing-hidden']
-    }
-
-    const inputChangeHandler = event => {
-        setClub({...club, name: event.target.value})
-    }
-
-    const onClubSelected = id => {
-        setClub(clubs[id])
-        editingField(true)
-    }
-
-    const searchInputHandler = event => {
-        setSearchClub({
-            ...searchClub,
-            [event.target.name]: event.target.value,
-        })
-    }
-
-    const toSearch = async () => {
-        try {
-            const body = searchClub
-            console.log(body)
-            const response = await fetch(
-                'http://192.168.0.20:5000/clubs/search', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(body)
-                })
-
-            const data = await response.json()
-            console.log(data)
-            setCLubs(data)
-        } catch (error) {
-            console.log(error.message);
-        }
-    }
-
-
-    const editClub = async () => {
-        try {
-            const body = club
-            const response = await fetch(
-                `http://192.168.0.20:5000/clubs/${club.id}`, {
-                    method: 'PUT',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(body)
-                }
-            )
-
-            const data = await response.json()
-            console.log('Successfuly edited row ', data);
-            
-            const _ = clubs.map( (_club, id) => {
-                if(_club.id === data.id) return data
-                    else return _club
-                    
-            })
-            setCLubs(_)
-            setClub({})
-            editingField(false)
-        } catch (error) {
-            console.log(error.message)
-        }
-        
-    }
-
-    const deleteClub = async club_id => {
-       
-        try {
-            console.log('Trying to delete club', club_id)
-            const response = await fetch(
-                `http://192.168.0.20:5000/clubs/${club_id}`, {
-                    method: 'DELETE',
-                }
-            )
-
-            setCLubs(clubs.filter(club => club.id !== club_id))
-            editingField(false)
-        } catch (error) {
-            console.log(error.message)
-        }
-    }
-
-    const createCLub = async(req, res) => {
-        try {
-            const body = {
-                name: document.getElementById('name-input').value,
-            }
-            console.log('Trying to create club', body)
-            const response = await fetch(
-                `http://192.168.0.20:5000/clubs/new`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(body)
-                }
-            )
-
-
-            const data = await response.json()
-            console.log('Successfuly created club ');
-            data.forEach(element => {
-                if(Object.keys(element).includes('id')) clubs.push(element)
-            });
-            
-            document.getElementById('name-input').value = ''
-            setSearchClub({})
-            setCLubs(clubs)
-            
-        } catch (error) {
-            console.log(error.message)
-        }
-    }
-
-
-    return (
-        <Fragment>
-            <div id="form-editing" className="form-editing-hidden">
-                <label htmlFor="id">Id</label>
-                <span name="id">{club.id}</span>
-                <label htmlFor="club-name">Club name</label>
-                <input className="disabled" name="club-name" onChange={e => inputChangeHandler(e)} value={club.name} ></input>
-                <button onClick={editClub}>Edit row</button>
-            </div>
-            <h4>Searching filed</h4>
-
-            <div className="search-create-form">
-                <label htmlFor="name-input">Club name</label>
-                <input type="text" id="name-input" onChange={e => searchInputHandler(e)} name="name"></input>
-                <button className="btn btn-warning" onClick={toSearch} >Find</button>
-                <button className="btn btn-success" onClick={createCLub} >Create</button>
-            </div>
-
-            <table className="table mt-5">
-                <thead>
-                    <tr>
-                        <th className="tableheader">Id</th>
-                        <th>Name</th>
-                        <th>Delete</th>
-                    </tr>
-                </thead>
-                <tbody >
-                    {clubs.map( (club, index) => {
-                        return (
-                        <tr className="club" key={club.id} onClick={() => onClubSelected(index)}>
-                            <td style={{textAlign: 'left'}}>{club.id}</td>
-                            <td style={{textAlign: 'left'}}>{club.name}</td>
-                            <td><button onClick={() => deleteClub(club.id)} className="btn btn-danger">Delete</button></td>
-                        </tr>
-                    )})}
-                </tbody>
-            </table>
-        </Fragment>
-    )
-}*/
-
-
-
 import React, {Fragment, useState, useEffect} from 'react'
+import { EditRow } from './EditRow'
 //import { club_stadium } from '../../../server/routes/table_names'
+
+export const serverUrl = 'http://192.168.0.20:5000'
 
 export const types = {
     date: 'date',
@@ -210,7 +24,9 @@ const Table = (props) => {
     //let table
     const [rows, setRows] = useState([])
     const [entity, setEntity] = useState({})
-    const [searchRow, setSearchRow] = useState({})
+    const [searchRow, setSearchRow] = useState(null)
+    const [randomRows, setRandomRows] = useState(1)
+    const [toChange, setToChange] = useState(false)
 
     
 
@@ -218,12 +34,11 @@ const Table = (props) => {
     const getRows = async (tableName) => {
         try {
             const response = await fetch(
-                `http://192.168.0.20:5000/${tableName}`, {
+                `${serverUrl}/${tableName}`, {
                     method: 'GET',
                 }
             )
             const jsonData = await response.json()
-            console.log(`${tableName}`, jsonData);
             setRows(jsonData)
             
         } catch (error) {
@@ -236,12 +51,12 @@ const Table = (props) => {
 
         getRows(props.tableName)
 
-        console.log('Getting all rows')
     }, [])
-    /*componentDidMount( () => {
-        getRows(props.tableName)
-        console.log(rows)
-    }) */
+
+    useEffect( () => {
+        setToChange(true)
+    }, [rows])
+
 
     //setting row whick would be edited
     const editInputChangeHandler = event => {
@@ -253,7 +68,9 @@ const Table = (props) => {
         const elem = document.getElementById('form-editing')
         if(visibility) elem.classList = ['form-editing-visible']
         //if(visibility) elem.remove('form-editing-hidden')
-            else elem.classList.push('form-editing-hidden')
+            else {
+                elem.classList = ['form-editing-hidden']
+            }
         if(!visibility) setEntity({})
     }
 
@@ -263,7 +80,7 @@ const Table = (props) => {
 
     const onRowSelected = id => {
         setEntity(rows[id])
-        editingField(true)
+        //editingField(true)
     }
 
     const searchInputHandler = event => {
@@ -272,15 +89,13 @@ const Table = (props) => {
             ...searchRow,
             [event.target.name]: event.target.value,
         })
-        console.log(searchRow)
     }
 
     const toSearch = async () => {
         try {
             const body = searchRow
-            console.log('tosearch body ',  body)
             const response = await fetch(
-                `http://192.168.0.20:5000/${props.tableName}/search`, {
+                `${serverUrl}/${props.tableName}/search`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(body)
@@ -289,7 +104,7 @@ const Table = (props) => {
             const data = await response.json()
             
             setRows(data)
-            setSearchRow({})
+            setSearchRow(null)
             //window.location = `/${tableName}`
         } catch (error) {
             console.log(error.message);
@@ -305,9 +120,8 @@ const Table = (props) => {
             })
 
             
-            console.log(`Trying to create row in table ${props.tableName}`, body)
             const response = await fetch(
-                `http://192.168.0.20:5000/${props.tableName}/new`, {
+                `${serverUrl}/${props.tableName}/new`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(body)
@@ -323,7 +137,7 @@ const Table = (props) => {
             props.table.forEach( (row) => {
                 document.getElementById(`search-create-${row.field}`).value = ''
             })
-            setSearchRow ({})
+            setSearchRow (null)
             setRows(rows)
             
         } catch (error) {
@@ -335,7 +149,7 @@ const Table = (props) => {
         try {
             const body = entity
             const response = await fetch(
-                `http://192.168.0.20:5000/${props.tableName}/${entity[props.table[0].field]}`, {
+                `${serverUrl}/${props.tableName}/${entity[props.table[0].field]}`, {
                     method: 'PUT',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(body)
@@ -343,7 +157,6 @@ const Table = (props) => {
             )
 
             const data = await response.json()
-            console.log('Successfuly edited row ', data);
             
             const _ = rows.map( (_row, id) => {
                 if(_row[props.table[0].field] === data[props.table[0].field]) return data
@@ -363,10 +176,8 @@ const Table = (props) => {
     const deleteRow = async row_id => {
        
         try {
-            console.log('Trying to delete row', row_id)
-            console.log(rows[row_id]);
             const response = await fetch(
-                `http://192.168.0.20:5000/${props.tableName}/${rows[row_id][props.table[0].field]}`, {
+                `${serverUrl}/${props.tableName}/${rows[row_id][props.table[0].field]}`, {
                     method: 'DELETE',
                 }
             )
@@ -378,11 +189,52 @@ const Table = (props) => {
         }
     }
 
+    const reload = (tableName) => {
+        setSearchRow({})
+        getRows(tableName)
+    }
+
+
+    const countInputHandler = (e) => {
+        setRandomRows(e.target.value)
+    }
+
+    const createRandomRows = async () => {
+        try {
+            const body = {count: randomRows}
+            
+            const response = await fetch(
+                `${serverUrl}/${props.tableName}/rand`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(body)
+                }
+            )
+
+            const data = await response.json()
+            let _ = [...rows]
+            data.forEach(element => {
+                if(Object.keys(element).includes( props.table[0].field )) _.push(element)
+            })
+            setRows(_)            
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
+
     return (
         
-        <div className="container">
         
-            <div id="form-editing" className="form-editing-hidden">
+        <div className="container">
+            <div >
+                <span onClick={() => reload(props.tableName)} className="position-absolute btn btn-primary " style={{right: '20px', width: '100px', height: '100px'}} >&#8635;</span>
+            </div>
+
+
+            
+            
+            {/* <div id="form-editing" className="form-editing-hidden">
+                <h1 className="text-center">Editing form</h1>
                 <div  className="p-3 border border-primary rounded mb-3">
                 {
                     
@@ -424,10 +276,12 @@ const Table = (props) => {
                 <button className="btn btn-danger " onClick={() => editingField(false)}  >&#10006;</button>
             
                 </div>
-                {/* ending of editing form */}
-                </div>
-            
+                
+            </div> */}
+    	    
             <div className="search-create-form">
+                <h1 className="text-center">Searching/Creating form</h1>
+                {/* div play role of form */}
                 <div className="p-3 rounded border border-primary">
                 {
                     props.table.map( (row, index) => {
@@ -455,17 +309,18 @@ const Table = (props) => {
                         return (
                             <div className="form-group row" key={index}>
                             <label className="col-sm-2 col-form-label" name={row.field} htmlFor={`search-create-${row.field}`}>{row.field}</label>                        
-                            <div className="col-sm-10"><input className="form-control" id={`search-create-${row.field}`} name={row.field} type={type} onChange={ e => searchInputHandler(e)} /></div>
+                            <div className="col-sm-10"><input className="form-control" id={`search-create-${row.field}`} name={row.field} type={type} value={searchRow ? searchRow[row.field] : ''} onChange={ e => searchInputHandler(e)} /></div>
                             </div>
                         )
                     })
                 }
-                    <button className="btn btn-warning" onClick={toSearch} >Find</button>
+                    <button className="btn btn-warning mr-3" onClick={toSearch} >Find</button>
                     <button className="btn btn-success" onClick={createRow} >Create</button>
                 </div>
             </div>
             
             <table className='table mt-5 table-hover table-dark'>
+                
                 <thead>
                     <tr>
                         {
@@ -478,49 +333,48 @@ const Table = (props) => {
                             })
                             
                         }   
+                        <th>Edit</th>
                         <th>Delete</th>
                     </tr>
                 </thead>
                 <tbody>
                     {
+                        
+
                         rows.map( (row, index) => {
                             return (
+                                
                                 <tr key={index}>
                                 {
                                     props.table.map( (entityRow, ind) => {    
                                         return (
-                                        <td key={ind} onClick={ () => onRowSelected(index)}  >{row[entityRow.field]}</td>
+                                        <td key={ind} >{row[entityRow.field]}</td>
                                         )
                                     })
                                     
                                 }
+                                    <td><EditRow table={props.table} update={getRows} tableName={props.tableName} entity={row} changeRow={toChange}/></td>
                                     <td><button className="btn btn-danger" onClick={() => deleteRow(index)}>Delete</button></td>
                                 </tr>
+                                
                             )
+                            
                         })
                     }
                 </tbody>
             </table>
-            {/*
-            <table className="table mt-5">
-                <thead>
-                    <tr>
-                        <th className="tableheader">Id</th>
-                        <th>Name</th>
-                        <th>Delete</th>
-                    </tr>
-                </thead>
-                <tbody >
-                    {clubs.map( (club, index) => {
-                        return (
-                        <tr className="club" key={club.id} onClick={() => onClubSelected(index)}>
-                            <td style={{textAlign: 'left'}}>{club.id}</td>
-                            <td style={{textAlign: 'left'}}>{club.name}</td>
-                            <td><button onClick={() => deleteClub(club.id)} className="btn btn-danger">Delete</button></td>
-                        </tr>
-                    )})}
-                </tbody>
-            </table> */}
+
+            {/* block for creating random data */}
+            { 
+                props.randomize ? 
+                    (<div className="form-inline">
+                        <div className="form-group mt-2" >
+                            <input className="form-control mr-2" type="number" value={randomRows} onChange={e => countInputHandler(e)} />
+                            <button onClick={createRandomRows} className="btn btn-success">Create random rows</button>
+                        </div>
+                    </div>)
+                : null
+            }
         </div>
     )
 }
