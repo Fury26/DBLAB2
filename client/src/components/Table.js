@@ -1,6 +1,5 @@
 import React, {Fragment, useState, useEffect} from 'react'
 import { EditRow } from './EditRow'
-//import { club_stadium } from '../../../server/routes/table_names'
 
 export const serverUrl = 'http://192.168.0.20:5000'
 
@@ -12,20 +11,15 @@ export const types = {
     string: 'varchar',
 }
 
-/*const table = [
-    {field: '', type: ''},
-]*/
-
-//class Table extends React.Component {
 const Table = (props) => {
 
-    const tableName = props.name
-    //const table = props.table
-    //let table
+    //array of all records, which need to be shown for viewer
     const [rows, setRows] = useState([])
-    const [entity, setEntity] = useState({})
+    //hold data, for filtering information 
     const [searchRow, setSearchRow] = useState(null)
-    const [randomRows, setRandomRows] = useState(1)
+    //contain count of records which should be randomly created
+    const [randomRows, setRandomRows] = useState(0)
+    //variable, used for updating edit window(presented like modal)
     const [toChange, setToChange] = useState(false)
 
     
@@ -51,38 +45,14 @@ const Table = (props) => {
 
         getRows(props.tableName)
 
-    }, [])
+    }, [props.tableName])
 
+    //looking is it need to updat modal window
     useEffect( () => {
         setToChange(true)
     }, [rows])
 
-
-    //setting row whick would be edited
-    const editInputChangeHandler = event => {
-        setEntity({...entity, [event.target.name]: event.target.value})
-    }
-
-    //change visibility of editing field when user needs it
-    const editingField = visibility => {
-        const elem = document.getElementById('form-editing')
-        if(visibility) elem.classList = ['form-editing-visible']
-        //if(visibility) elem.remove('form-editing-hidden')
-            else {
-                elem.classList = ['form-editing-hidden']
-            }
-        if(!visibility) setEntity({})
-    }
-
-    /*const inputChangeHandler = event => {
-        setClub({...club, name: event.target.value})
-    }*/
-
-    const onRowSelected = id => {
-        setEntity(rows[id])
-        //editingField(true)
-    }
-
+    //called when typing in search form
     const searchInputHandler = event => {
         // set value of field with name == to it is input name
         setSearchRow({
@@ -91,6 +61,7 @@ const Table = (props) => {
         })
     }
 
+    //called when trying to send data on server for filltering records
     const toSearch = async () => {
         try {
             const body = searchRow
@@ -105,7 +76,6 @@ const Table = (props) => {
             
             setRows(data)
             setSearchRow(null)
-            //window.location = `/${tableName}`
         } catch (error) {
             console.log(error.message);
         }
@@ -145,60 +115,36 @@ const Table = (props) => {
         }
     }
 
-    const editRowHandler = async () => {
-        try {
-            const body = entity
-            const response = await fetch(
-                `${serverUrl}/${props.tableName}/${entity[props.table[0].field]}`, {
-                    method: 'PUT',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(body)
-                }
-            )
-
-            const data = await response.json()
-            
-            const _ = rows.map( (_row, id) => {
-                if(_row[props.table[0].field] === data[props.table[0].field]) return data
-                    else return _row
-                    
-            })
-            setRows(_)
-            setEntity({})
-            editingField(false)
-        } catch (error) {
-            console.log(error.message)
-        }
-        
-    }
-
     //deleting row from rows array by it index
     const deleteRow = async row_id => {
        
         try {
-            const response = await fetch(
+            await fetch(
                 `${serverUrl}/${props.tableName}/${rows[row_id][props.table[0].field]}`, {
                     method: 'DELETE',
                 }
             )
 
             setRows(rows.filter((row, index) => index !== row_id))
-            editingField(false)
+            //editingField(false)
         } catch (error) {
             console.log(error.message)
         }
     }
 
+    //load all records from current table
     const reload = (tableName) => {
         setSearchRow({})
         getRows(tableName)
     }
 
 
+    //update how many random records should be created
     const countInputHandler = (e) => {
         setRandomRows(e.target.value)
     }
 
+    //send requset on the server to create randoms records
     const createRandomRows = async () => {
         try {
             const body = {count: randomRows}
@@ -229,58 +175,11 @@ const Table = (props) => {
             <div >
                 <span onClick={() => reload(props.tableName)} className="position-absolute btn btn-primary " style={{right: '20px', width: '100px', height: '100px'}} >&#8635;</span>
             </div>
-
-
-            
-            
-            {/* <div id="form-editing" className="form-editing-hidden">
-                <h1 className="text-center">Editing form</h1>
-                <div  className="p-3 border border-primary rounded mb-3">
-                {
-                    
-                    props.table.map( (row, index) => {
-                        let type
-                        switch (row.type) {
-                            case types.date:
-                                type='date'
-                                break
-                            case types.datetime:
-                                type='datetime-local'
-                                break
-                            case types.money:
-                                type='number'
-                                break
-                            case types.string:
-                                type='text'
-                                break
-                            case types.number:
-                                type='number'
-                                break
-                            default:
-                                type='text'
-                                break;
-                        }
-                        return (
-                            
-                            <div className="form-group row" key={index}>
-                                <label className="col-sm-2 col-form-label" name={row.field} htmlFor={`edit-${row.field}`}>{row.field}</label>                 
-                                <div className="col-sm-10"><input className="form-control" id={`edit-${row.field}`} name={row.field} type={type} onChange={e => editInputChangeHandler(e)} value={entity[row.field]} /></div>
-                            </div>
-                            
-                        )
-                        
-                    })
-                    
-                }
-                <button className="btn btn-warning" onClick={editRowHandler}>Edit Row</button>
-                <button className="btn btn-danger " onClick={() => editingField(false)}  >&#10006;</button>
-            
-                </div>
-                
-            </div> */}
     	    
+            {/* block for filltering rows or creating records */}
             <div className="search-create-form">
                 <h1 className="text-center">Searching/Creating form</h1>
+                
                 {/* div play role of form */}
                 <div className="p-3 rounded border border-primary">
                 {
@@ -309,18 +208,21 @@ const Table = (props) => {
                         return (
                             <div className="form-group row" key={index}>
                             <label className="col-sm-2 col-form-label" name={row.field} htmlFor={`search-create-${row.field}`}>{row.field}</label>                        
+                            {/* block for typing data */}
                             <div className="col-sm-10"><input className="form-control" id={`search-create-${row.field}`} name={row.field} type={type} value={searchRow ? searchRow[row.field] : ''} onChange={ e => searchInputHandler(e)} /></div>
                             </div>
                         )
                     })
                 }
+                    {/* start searching for rows */}
                     <button className="btn btn-warning mr-3" onClick={toSearch} >Find</button>
+                    {/* creates record */}
                     <button className="btn btn-success" onClick={createRow} >Create</button>
                 </div>
             </div>
             
             <table className='table mt-5 table-hover table-dark'>
-                
+                {/* headers of the table */}
                 <thead>
                     <tr>
                         {
@@ -339,8 +241,7 @@ const Table = (props) => {
                 </thead>
                 <tbody>
                     {
-                        
-
+                        // converting rows arrat into html
                         rows.map( (row, index) => {
                             return (
                                 
@@ -353,7 +254,7 @@ const Table = (props) => {
                                     })
                                     
                                 }
-                                    <td><EditRow table={props.table} update={getRows} tableName={props.tableName} entity={row} changeRow={toChange}/></td>
+                                    <td><EditRow table={props.table} update={getRows} tableName={props.tableName} entity={{...rows[index]}} changeRow={toChange}/></td>
                                     <td><button className="btn btn-danger" onClick={() => deleteRow(index)}>Delete</button></td>
                                 </tr>
                                 
@@ -364,7 +265,7 @@ const Table = (props) => {
                 </tbody>
             </table>
 
-            {/* block for creating random data */}
+            {/* block for creating random data if it possible for this table*/}
             { 
                 props.randomize ? 
                     (<div className="form-inline">

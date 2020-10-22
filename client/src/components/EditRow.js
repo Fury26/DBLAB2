@@ -4,14 +4,15 @@ import {serverUrl} from './Table'
 
 export const EditRow = (props) => {
 
-    const [entity, setEntity] = useState(props.entity)
+    const [entity, setEntity] = useState({...props.entity})
     
     useEffect(() => {
-        setEntity(props.entity)
-    }, props.toChange)
+        setEntity({...props.entity})
+    }, [props.toChange, props.entity])
 
     const editRowHandler = async () => {
         try {
+            console.log('aaaaaaaa');
             const body = entity
             const response = await fetch(
                 `${serverUrl}/${props.tableName}/${entity[props.table[0].field]}`, {
@@ -21,7 +22,7 @@ export const EditRow = (props) => {
                 }
             )
 
-            const data = await response.json()
+            await response.json()
             
             props.update(props.tableName)
             setEntity({})
@@ -34,7 +35,9 @@ export const EditRow = (props) => {
     
 
     const editInputChangeHandler = event => {
+        console.log('aaaaaa, event', event.target.value);
         setEntity({...entity, [event.target.name]: event.target.value})
+        console.log(entity)
     }
 
     return (
@@ -87,16 +90,14 @@ export const EditRow = (props) => {
                                     return (
                                         
                                         <div className="form-group row" key={index}>
-                                            <label className="col-sm-2 col-form-label" name={row.field} htmlFor={`#edit-${row.field}`}>{row.field}</label>                 
-                                            <div className="col-sm-10"><input className="form-control" id={`edit-${row.field}`} name={row.field} type={type} onChange={e => editInputChangeHandler(e)} value={entity[row.field]} /></div>
+                                            <label className="col-sm-2 col-form-label" name={row.field} htmlFor={`#edit-${row.field}-${entity[props.table[0].field]}`}>{row.field}</label>                 
+                                            <div className="col-sm-10"><input className="form-control" id={`edit-${row.field}-${entity[props.table[0].field]}`} name={row.field} type={type} onChange={e => editInputChangeHandler(e)} value={entity[row.field]} /></div>
                                         </div>
                                         
                                     )
                                 })
                                 
                             }
-                            {/* <button classNameName="btn btn-warning" onClick={editRowHandler}>Edit Row</button>
-                            <button classNameName="btn btn-danger " onClick={() => editingField(false)}  >&#10006;</button> */}
                         
                             </div>
                             {/* ending of editing form */}

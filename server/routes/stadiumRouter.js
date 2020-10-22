@@ -1,12 +1,8 @@
 const {Router} =  require('express')
-const { query } = require('../db')
 const pool = require('../db')
-const { club, stadium } = require('./table_names')
-const tables = require('./table_names')
 const router = Router()
 
-//const selectAll = 'SELECT * FROM'
-
+//returns all records in the table
 router.get('/stadium', async(req, res) => {
     try {
         const stadiums = await pool.query(`SELECT * FROM stadium;`)
@@ -17,6 +13,22 @@ router.get('/stadium', async(req, res) => {
     }
 })
 
+//create random record
+router.post('/stadium/rand', async(req, res) => {
+    try {
+        const {count} = req.body
+        let qu = `INSERT INTO stadium(title, city, capacity) select getrandomstring(10) as title, getrandomstring(10) as city, randomnum(100000) as capacity, from generate_series(1, ${count});`
+         
+        let response = await pool.query(qu)
+        qu = `${selectAll} player ORDER BY id DESC FETCH FIRST ${count} ROW ONLY;`
+        response = await pool.query(qu)
+        res.json(response.rows)
+    } catch (error) {
+        console.log(error.message);
+    }
+})
+
+//returns all rows which match to given paramatres
 router.post('/stadium/search', async(req, res) => {
     try {
         let {title, city, capacity} = req.body
@@ -40,6 +52,7 @@ router.post('/stadium/search', async(req, res) => {
     }
 })
 
+//creates new record by give data
 router.post('/stadium/new', async(req, res) => {
     try {
         let {title, city, capacity} = req.body
@@ -55,6 +68,7 @@ router.post('/stadium/new', async(req, res) => {
     }
 })
 
+//edit record with given id by replacing it with new data
 router.put('/stadium/:id', async(req, res) => {
     try {
         const {id} = req.params
@@ -83,7 +97,7 @@ router.put('/stadium/:id', async(req, res) => {
     }
 })
 
-
+//delete record by given id
 router.delete('/stadium/:id', async(req, res) => {
     try {
         const {id} = req.params

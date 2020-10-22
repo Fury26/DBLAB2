@@ -1,9 +1,8 @@
 const {Router} =  require('express')
 const pool = require('../db')
-const tables = require('./table_names')
 const router = Router()
 
-
+//returns all records in the table
 router.get('/clubs_tournaments', async(req, res) => {
     try {
         const clubs_tournamentss = await pool.query('SELECT * FROM clubs_tournaments;')
@@ -13,6 +12,7 @@ router.get('/clubs_tournaments', async(req, res) => {
     }
 })
 
+//returns all rows which match to given paramatres
 router.post('/clubs_tournaments/search', async(req, res) => {
     try {
         const {club_id, tournament_id} = req.body
@@ -31,6 +31,7 @@ router.post('/clubs_tournaments/search', async(req, res) => {
     }
 })
 
+//create new record into the table by givin information
 router.post('/clubs_tournaments/new', async(req, res) => {
     try {
         const {club_id, tournament_id} = req.body
@@ -45,7 +46,7 @@ router.post('/clubs_tournaments/new', async(req, res) => {
     }
 })
 
-
+//changes record with given id 
 router.put('/clubs_tournaments/:id', async(req, res) => {
     try {
         const {id} = req.params
@@ -61,7 +62,7 @@ router.put('/clubs_tournaments/:id', async(req, res) => {
     }
 })
 
-
+//delete record by given id
 router.delete('/clubs_tournaments/:id', async(req, res) => {
     try {
         const {id} = req.params

@@ -6,6 +6,9 @@ import {types} from './components/Table'
 
 export const Routes = () => {
 
+    //creating structure of my tables
+    //it is are arrays of objects, those pbjects represents columns
+    //first value in object is name of the column, second - it is type
     const clubTable = [
         {field: 'id', type: types.number},
         {field: 'name', type: types.string},
@@ -56,31 +59,40 @@ export const Routes = () => {
 
 
     return(
+        //creating routes, it is set up component(s) for each possible api of the application 
         <Switch>
             <Route path="/" exact>
                 <MainMenu />
             </Route>
+
             <Route path="/club" exact>
                 <Table table={clubTable} tableName="club" randomize={true}/>
             </Route>
+
             <Route path="/player" exact>
                 <Table table={playerTable} tableName="player" randomize={false}/>
             </Route>
+
             <Route path="/stadium" exact>
                 <Table table={stadiumTable} tableName="stadium" randomize={true}/>
             </Route>
+
             <Route path="/match" exact>
                 <Table table={matchTable} tableName="match" randomize={false}/>
             </Route>
+
             <Route path="/tournament" exact>
                 <Table table={tournamentTable} tableName="tournament" randomize={true}/>
             </Route>
+
             <Route path="/clubs_tournaments" exact>
                 <Table table={clubsTournamentsTable} tableName="clubs_tournaments" randomize={false}/>
             </Route>
+
             <Route path="/club_stadium" exact>
                 <Table table={clubStadiumTable} tableName="club_stadium" randomize={false}/>
             </Route>
+
             <Redirect to="/" />
         </Switch>
     )}

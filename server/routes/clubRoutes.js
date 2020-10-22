@@ -1,9 +1,8 @@
 const {Router} =  require('express')
 const pool = require('../db')
-const tables = require('./table_names')
 const router = Router()
 
-
+//returns all records in the table
 router.get('/club', async(req, res) => {
     try {
         const clubs = await pool.query('SELECT * FROM club ORDER BY id;')
@@ -13,6 +12,7 @@ router.get('/club', async(req, res) => {
     }
 })
 
+//returns all rows which match to given paramatres
 router.post('/club/search', async(req, res) => {
     try {
         const {name} = req.body
@@ -24,26 +24,27 @@ router.post('/club/search', async(req, res) => {
     }
 })
 
+//create new record into the table by givin information
 router.post('/club/new', async(req, res) => {
     try {
         const {name} = req.body
         let qu = `INSERT INTO club(name) values (\'${name}\');`
         let response = await pool.query(qu)
-        qu = `SELECT * FROM ${tables.club} ORDER BY id DESC FETCH FIRST 1 ROW ONLY;`
+        qu = `SELECT * FROM club ORDER BY id DESC FETCH FIRST 1 ROW ONLY;`
         response = await pool.query(qu)
-        //response = await pool.query(qu)
         res.json(response.rows)
     } catch (error) {
         console.log(error.message);
     }
 })
 
+//create random record
 router.post('/club/rand', async(req, res) => {
     try {
         const {count} = req.body
         let qu = `INSERT INTO club(name) select getrandomstring(10) as name from generate_series(1, ${count});`
         let response = await pool.query(qu)
-        qu = `SELECT * FROM ${tables.club} ORDER BY id DESC FETCH FIRST ${count} ROW ONLY;`
+        qu = `SELECT * FROM club ORDER BY id DESC FETCH FIRST ${count} ROW ONLY;`
         response = await pool.query(qu)
         res.json(response.rows)
     } catch (error) {
@@ -51,6 +52,7 @@ router.post('/club/rand', async(req, res) => {
     }
 })
 
+//changes record with given id 
 router.put('/club/:id', async(req, res) => {
     try {
         const {id} = req.params
@@ -66,15 +68,15 @@ router.put('/club/:id', async(req, res) => {
     }
 })
 
-
+//delete record by given id
 router.delete('/club/:id', async(req, res) => {
     try {
         const {id} = req.params
-        const qu = `DELETE FROM ${tables.club_stadium} WHERE club_id = ${id};
-        DELETE FROM ${tables.clubs_tournaments} WHERE club_id = ${id};
-        DELETE FROM ${tables.match} WHERE home_club_id = ${id} OR away_club_id = ${id};
-        UPDATE ${tables.player} SET club_id = NULL WHERE club_id = ${id};
-        DELETE FROM ${tables.club} WHERE id = ${id};`
+        const qu = `DELETE FROM club_stadium WHERE club_id = ${id};
+        DELETE FROM clubs_tournaments WHERE club_id = ${id};
+        DELETE FROM match WHERE home_club_id = ${id} OR away_club_id = ${id};
+        UPDATE player SET club_id = NULL WHERE club_id = ${id};
+        DELETE FROM club WHERE id = ${id};`
         const response = await pool.query(qu)
         
         res.json('Successfuly deleted')

@@ -1,25 +1,9 @@
-/* .mainmenu {
-    border: 1px solid black;
-    display: flex;
-    justify-content: space-around;
-} */
-
-/*.card {
-    border-radius: 10px;
-    min-width: 300px;
-    min-height: 200px;
-    text-align: center;
-    border: 1px solid blue;
-}*/
-
-/* .Cards {
-    display: flex;
-} */
-
 .div-card {
     margin: 30px;
     background: lightcyan;
+    height: 400px;
     transition: all .3s ease-in-out;
+    border: 2px solid purple;
 }
 
 .div-card:hover{
@@ -36,43 +20,21 @@ body {
     border-top-right-radius: 20px;
 }
 
-/*.card-title {
-    padding-top: 25%;
-}*/
-
-
-
 .row:hover {
     background: rgba(217, 148, 235, 0.3);
 }
 
 .searchForm {
-
     max-width: 600px;
-    
 }
 
 .form-editing-hidden {
     display: none;
 }
 
-.form-editing-visible {
-    
+.card-btn {
+    position: absolute;
+    bottom: 10px;
+    width: 50%;
+    left: 25%;
 }
-/*.form-editing-visible {
-    display: grid;
-    border: 1px solid black;
-    border-radius: 10px;
-    padding: 5px;
-    margin: 5px;
-    grid-template-columns: 100px 200px;
-}*/
-
-/*.search-create-form {
-    display: grid;
-    border: 1px solid black;
-    border-radius: 10px;
-    padding: 5px;
-    margin: 5px;
-    grid-template-columns: 100px 200px;
-}*/

@@ -1,10 +1,10 @@
 const {Router} =  require('express')
 const pool = require('../db')
-const tables = require('./table_names')
 const router = Router()
 
 const selectAll = 'SELECT id, firstname, lastname, club_id, FORMAT(birthday::varchar, \'d\', \'en-US\') as birthday FROM'
 
+//returns all records in the table
 router.get('/player', async(req, res) => {
     try {
         const players = await pool.query(`${selectAll} player;`)
@@ -14,10 +14,11 @@ router.get('/player', async(req, res) => {
     }
 })
 
+//create random record
 router.post('/player/rand', async(req, res) => {
     try {
         const {count} = req.body
-        let qu = `INSERT INTO player(name) select getrandomstring(10) as firstname, getrandomstring(10) as lastname, trunc(random()*(SELECT MAX(id) from club)) as club_id,  from generate_series(1, ${count});`
+        let qu = `INSERT INTO player(name) select getrandomstring(10) as firstname, getrandomstring(10) as lastname, getrandomdate() as birthday, from generate_series(1, ${count});`
          
         let response = await pool.query(qu)
         qu = `${selectAll} player ORDER BY id DESC FETCH FIRST ${count} ROW ONLY;`
@@ -28,6 +29,7 @@ router.post('/player/rand', async(req, res) => {
     }
 })
 
+//returns all rows which match to given paramatres
 router.post('/player/search', async(req, res) => {
     try {
         let {lastname, firstname, club_id, birthday} = req.body
@@ -60,7 +62,7 @@ router.post('/player/new', async(req, res) => {
         let qu = `INSERT INTO player(firstname, lastname, club_id, birthday) values (\'${firstname}\', \'${lastname}\', ${club_id}, \'${birthday}\'::date);`
          
         let response = await pool.query(qu)
-        qu = `${selectAll} ${tables.player} ORDER BY id DESC FETCH FIRST 1 ROW ONLY;`
+        qu = `${selectAll} player ORDER BY id DESC FETCH FIRST 1 ROW ONLY;`
         response = await pool.query(qu)
         //response = await pool.query(qu)
         res.json(response.rows)
@@ -69,6 +71,7 @@ router.post('/player/new', async(req, res) => {
     }
 })
 
+//changes record with given id 
 router.put('/player/:id', async(req, res) => {
     try {
         const {id} = req.params
@@ -99,7 +102,7 @@ router.put('/player/:id', async(req, res) => {
     }
 })
 
-
+//delete record by given id
 router.delete('/player/:id', async(req, res) => {
     try {
         const {id} = req.params

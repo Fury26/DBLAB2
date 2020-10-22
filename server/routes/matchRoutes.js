@@ -1,10 +1,10 @@
 const {Router} =  require('express')
 const pool = require('../db')
-const tables = require('./table_names')
 const router = Router()
 
 const selectAll = 'SELECT id, tournament_id, home_club_id, away_club_id, to_char(datetime, \'Mon/DD/YYYY\') as datetime, result, concat(\'$\', ticket_cost::numeric) as ticket_cost FROM'
 
+//returns all records in the table
 router.get('/match', async(req, res) => {
     try {
         const matchs = await pool.query(`${selectAll} match;`)
@@ -14,6 +14,7 @@ router.get('/match', async(req, res) => {
     }
 })
 
+//returns all rows which match to given paramatres
 router.post('/match/search', async(req, res) => {
     try {
         let {result, tournament_id, home_club_id, away_club_id, ticket_cost, datetime} = req.body
@@ -46,6 +47,7 @@ router.post('/match/search', async(req, res) => {
     }
 })
 
+//create new record into the table by givin information
 router.post('/match/new', async(req, res) => {
     try {
         let {result, tournament_id, home_club_id, away_club_id, ticket_cost, datetime} = req.body
@@ -61,6 +63,7 @@ router.post('/match/new', async(req, res) => {
     }
 })
 
+//changes record with given id 
 router.put('/match/:id', async(req, res) => {
     try {
         const {id} = req.params
@@ -98,7 +101,7 @@ router.put('/match/:id', async(req, res) => {
     }
 })
 
-
+//delete record by given id
 router.delete('/match/:id', async(req, res) => {
     try {
         const {id} = req.params
