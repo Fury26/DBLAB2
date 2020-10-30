@@ -17,10 +17,10 @@ router.get('/stadium', async(req, res) => {
 router.post('/stadium/rand', async(req, res) => {
     try {
         const {count} = req.body
-        let qu = `INSERT INTO stadium(title, city, capacity) select getrandomstring(10) as title, getrandomstring(10) as city, randomnum(100000) as capacity, from generate_series(1, ${count});`
+        let qu = `INSERT INTO stadium(title, city, capacity) select getrandomstring(10) as title, getrandomstring(10) as city, randomnum(100000) as capacity from generate_series(1, ${count});`
          
         let response = await pool.query(qu)
-        qu = `${selectAll} player ORDER BY id DESC FETCH FIRST ${count} ROW ONLY;`
+        qu = `SELECT * FROM stadium ORDER BY id DESC FETCH FIRST ${count} ROW ONLY;`
         response = await pool.query(qu)
         res.json(response.rows)
     } catch (error) {
