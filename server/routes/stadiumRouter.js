@@ -9,6 +9,7 @@ router.get('/stadium', async(req, res) => {
 
         res.json(stadiums.rows)
     } catch (error) {
+        res.status(400).json('Error');
         console.log(error.message)
     }
 })
@@ -24,6 +25,7 @@ router.post('/stadium/rand', async(req, res) => {
         response = await pool.query(qu)
         res.json(response.rows)
     } catch (error) {
+        res.status(400).json('Error');
         console.log(error.message);
     }
 })
@@ -48,6 +50,7 @@ router.post('/stadium/search', async(req, res) => {
         const response = await pool.query(qu)
         res.json(response.rows)
     } catch (error) {
+        res.status(400).json('Error');
         console.log(error.message);
     }
 })
@@ -64,6 +67,7 @@ router.post('/stadium/new', async(req, res) => {
         //response = await pool.query(qu)
         res.json(response.rows)
     } catch (error) {
+        res.status(400).json('Error');
         console.log(error.message);
     }
 })
@@ -93,6 +97,7 @@ router.put('/stadium/:id', async(req, res) => {
         response = await pool.query(qu)
         res.json(response.rows[0])
     } catch (error) {
+        res.status(400).json('Error');
         console.log(error.message);
     }
 })
@@ -107,6 +112,7 @@ router.delete('/stadium/:id', async(req, res) => {
         
         res.json('Successfuly deleted')
     } catch (error) {
+        res.status(400).json('Error');
         console.log(error.message)
     }
 })

@@ -10,6 +10,8 @@ router.get('/player', async(req, res) => {
         const players = await pool.query(`${selectAll} player;`)
         res.json(players.rows)
     } catch (error) {
+        res.status(400).json('Error');
+    
         console.log(error.message)
     }
 })
@@ -25,6 +27,7 @@ router.post('/player/rand', async(req, res) => {
         response = await pool.query(qu)
         res.json(response.rows)
     } catch (error) {
+        res.status(400).json('Error');
         console.log(error.message);
     }
 })
@@ -52,6 +55,7 @@ router.post('/player/search', async(req, res) => {
         const response = await pool.query(qu)
         res.json(response.rows)
     } catch (error) {
+        res.status(400).json('Error');
         console.log(error.message);
     }
 })
@@ -67,6 +71,7 @@ router.post('/player/new', async(req, res) => {
         //response = await pool.query(qu)
         res.json(response.rows)
     } catch (error) {
+        res.status(400).json('Error');
         console.log(error.message);
     }
 })
@@ -98,6 +103,7 @@ router.put('/player/:id', async(req, res) => {
         response = await pool.query(qu)
         res.json(response.rows[0])
     } catch (error) {
+        res.status(400).json('Error');
         console.log(error.message);
     }
 })
@@ -111,6 +117,7 @@ router.delete('/player/:id', async(req, res) => {
         
         res.json('Successfuly deleted')
     } catch (error) {
+        res.status(400).json('Error');
         console.log(error.message)
     }
 })

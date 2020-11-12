@@ -8,6 +8,7 @@ router.get('/club_stadium', async(req, res) => {
         const club_stadiums = await pool.query('SELECT * FROM club_stadium;')
         res.json(club_stadiums.rows)
     } catch (error) {
+        res.status(400).json('Error');
         console.log(error.message)
     }
 })
@@ -27,6 +28,7 @@ router.post('/club_stadium/search', async(req, res) => {
         const response = await pool.query(qu)
         res.json(response.rows)
     } catch (error) {
+        res.status(400).json('Error');
         console.log(error.message);
     }
 })
@@ -42,6 +44,7 @@ router.post('/club_stadium/new', async(req, res) => {
         //response = await pool.query(qu)
         res.json(response.rows)
     } catch (error) {
+        res.status(400).json('Error');
         console.log(error.message);
     }
 })
@@ -59,6 +62,7 @@ router.put('/club_stadium/:id', async(req, res) => {
         console.log(response.rows);
         res.json(response.rows[0])
     } catch (error) {
+        res.status(400).json('Error');
         console.log(error.message);
     }
 })
@@ -72,6 +76,7 @@ router.delete('/club_stadium/:id', async(req, res) => {
         
         res.json('Successfuly deleted')
     } catch (error) {
+        res.status(400).json('Error');
         console.log(error.message)
     }
 })

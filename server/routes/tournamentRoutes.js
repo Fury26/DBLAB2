@@ -9,6 +9,7 @@ router.get('/tournament', async(req, res) => {
 
         res.json(tournaments.rows)
     } catch (error) {
+        res.status(400).json('Error');
         console.log(error.message)
     }
 })
@@ -29,6 +30,7 @@ router.post('/tournament/search', async(req, res) => {
         const response = await pool.query(qu)
         res.json(response.rows)
     } catch (error) {
+        res.status(400).json('Error');
         console.log(error.message);
     }
 })
@@ -44,6 +46,7 @@ router.post('/tournament/new', async(req, res) => {
         response = await pool.query(qu)
         res.json(response.rows)
     } catch (error) {
+        res.status(400).json('Error');
         console.log(error.message);
     }
 })
@@ -59,6 +62,7 @@ router.post('/tournament/rand', async(req, res) => {
         response = await pool.query(qu)
         res.json(response.rows)
     } catch (error) {
+        res.status(400).json('Error');
         console.log(error.message);
     }
 })
@@ -76,6 +80,7 @@ router.put('/tournament/:id', async(req, res) => {
         response = await pool.query(qu)
         res.json(response.rows[0])
     } catch (error) {
+        res.status(400).json('Error');
         console.log(error.message);
     }
 })
@@ -89,6 +94,7 @@ router.delete('/tournament/:id', async(req, res) => {
         
         res.json('Successfuly deleted')
     } catch (error) {
+        res.status(400).json('Error');
         console.log(error.message)
     }
 })

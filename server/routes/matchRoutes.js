@@ -10,6 +10,8 @@ router.get('/match', async(req, res) => {
         const matchs = await pool.query(`${selectAll} match;`)
         res.json(matchs.rows)
     } catch (error) {
+        res.status(400).json('Error');
+
         console.log(error.message)
     }
 })
@@ -43,6 +45,8 @@ router.post('/match/search', async(req, res) => {
         res.json(response.rows)
         //res.json('Server has got a data')
     } catch (error) {
+        res.status(400).json('Error');
+
         console.log(error.message);
     }
 })
@@ -97,6 +101,8 @@ router.put('/match/:id', async(req, res) => {
         response = await pool.query(qu)
         res.json(response.rows[0])
     } catch (error) {
+        res.status(400).json('Error');
+
         console.log(error.message);
     }
 })
@@ -110,6 +116,8 @@ router.delete('/match/:id', async(req, res) => {
         
         res.json('Successfuly deleted')
     } catch (error) {
+        res.status(400).json('Error');
+
         console.log(error.message)
     }
 })

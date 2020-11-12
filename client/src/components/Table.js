@@ -32,7 +32,12 @@ const Table = (props) => {
                     method: 'GET',
                 }
             )
+            
             const jsonData = await response.json()
+            if(response.status === 400) {
+                window.alert(jsonData)
+                return
+            }
             setRows(jsonData)
             
         } catch (error) {
@@ -73,7 +78,10 @@ const Table = (props) => {
                 })
 
             const data = await response.json()
-            
+            if(response.status === 400) {
+                window.alert(data)
+                return
+            }
             setRows(data)
             setSearchRow(null)
         } catch (error) {
@@ -100,6 +108,10 @@ const Table = (props) => {
 
 
             const data = await response.json()
+            if(response.status === 400) {
+                window.alert(data)
+                return
+            }
             data.forEach(element => {
                 if(Object.keys(element).includes( props.table[0].field )) rows.push(element)
             })
@@ -119,13 +131,18 @@ const Table = (props) => {
     const deleteRow = async row_id => {
        
         try {
-            await fetch(
+            const response = await fetch(
                 `${serverUrl}/${props.tableName}/${rows[row_id][props.table[0].field]}`, {
                     method: 'DELETE',
                 }
             )
 
+            if(response.status === 400) {
+                window.alert(await response.json())
+                return
+            } else {
             setRows(rows.filter((row, index) => index !== row_id))
+            }
             //editingField(false)
         } catch (error) {
             console.log(error.message)
@@ -158,6 +175,12 @@ const Table = (props) => {
             )
 
             const data = await response.json()
+
+
+            if(response.status === 400) {
+                window.alert(data)
+                return;
+            }
             let _ = [...rows]
             data.forEach(element => {
                 if(Object.keys(element).includes( props.table[0].field )) _.push(element)

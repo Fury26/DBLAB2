@@ -8,6 +8,7 @@ router.get('/club', async(req, res) => {
         const clubs = await pool.query('SELECT * FROM club ORDER BY id;')
         res.json(clubs.rows)
     } catch (error) {
+        res.status(400).json('Error');
         console.log(error.message)
     }
 })
@@ -20,6 +21,8 @@ router.post('/club/search', async(req, res) => {
         const response = await pool.query(qu)
         res.json(response.rows)
     } catch (error) {
+        res.status(400).json('Error');
+
         console.log(error.message);
     }
 })
@@ -34,6 +37,7 @@ router.post('/club/new', async(req, res) => {
         response = await pool.query(qu)
         res.json(response.rows)
     } catch (error) {
+        res.status(400).json('Error');
         console.log(error.message);
     }
 })
@@ -48,6 +52,8 @@ router.post('/club/rand', async(req, res) => {
         response = await pool.query(qu)
         res.json(response.rows)
     } catch (error) {
+        res.status(400).json('Error');
+
         console.log(error.message);
     }
 })
@@ -64,6 +70,7 @@ router.put('/club/:id', async(req, res) => {
         response = await pool.query(qu)
         res.json(response.rows[0])
     } catch (error) {
+        res.status(400).json('Error');
         console.log(error.message);
     }
 })
@@ -81,6 +88,7 @@ router.delete('/club/:id', async(req, res) => {
         
         res.json('Successfuly deleted')
     } catch (error) {
+        res.status(400).json('Error');
         console.log(error.message)
     }
 })
